@@ -58,7 +58,7 @@ public class InMemoryUserStorageImpl implements UserStorage {
             emails.add(user.getEmail());
 
             return user;
-        } else throw new IncorrectEmailException("Email-name combination already exists!");
+        } else throw new IncorrectEmailException("Email already exists!");
     }
 
     @Override
