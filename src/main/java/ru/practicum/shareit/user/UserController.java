@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.Valid;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -17,22 +17,22 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping()
-    public Collection<User> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userService.returnAllUsers();
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
+    public UserDto getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     @PatchMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @Valid @RequestBody UserDto user) {
+    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto user) {
         return userService.updateUser(id, user);
     }
 
     @PostMapping()
-    public User addUser(@Valid @RequestBody User user) {
+    public UserDto addUser(@Valid @RequestBody UserDto user) {
         return userService.createUser(user);
     }
 

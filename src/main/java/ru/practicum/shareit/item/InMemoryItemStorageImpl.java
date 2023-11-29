@@ -10,10 +10,7 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserService;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -24,7 +21,7 @@ public class InMemoryItemStorageImpl implements ItemStorage {
     Map<Long, Item> items = new HashMap<>();
 
     @Override
-    public Collection<ItemDto> returnAllItems(Long userId) {
+    public List<ItemDto> returnAllItems(Long userId) {
         return items.values().stream().filter(item -> item.getOwnerId() == userId).map(ItemMapper::toItemDto).collect(Collectors.toList());
     }
 
@@ -34,7 +31,7 @@ public class InMemoryItemStorageImpl implements ItemStorage {
     }
 
     @Override
-    public ItemDto updateItem(Long userId, Long itemId, Item item) {
+    public ItemDto updateItem(Long userId, Long itemId, ItemDto item) {
         if (userService.isValidUser(userId)) {
             Item previous = items.get(itemId);
             item.setId(itemId);
@@ -48,9 +45,12 @@ public class InMemoryItemStorageImpl implements ItemStorage {
                 if (item.getAvailable() == null) {
                     item.setAvailable(previous.getAvailable());
                 }
+                if (item.getRequestId() == null) {
+                    item.setRequestId(previous.getRequestId());
+                }
                 item.setOwnerId(userId);
-                items.put(item.getId(), item);
-                return ItemMapper.toItemDto(item);
+                items.put(item.getId(), ItemMapper.toItem(item));
+                return item;
             } else {
                 throw new IncorrectItemIdException("Not your item!");
             }
@@ -60,17 +60,17 @@ public class InMemoryItemStorageImpl implements ItemStorage {
     }
 
     @Override
-    public ItemDto createItem(Long userId, Item item) {
+    public ItemDto createItem(Long userId, ItemDto item) {
         if (userService.isValidUser(userId)) {
             item.setId(getId());
             item.setOwnerId(userId);
-            items.put(item.getId(), item);
-            return ItemMapper.toItemDto(item);
+            items.put(item.getId(), ItemMapper.toItem(item));
+            return item;
         } else throw new NotFoundUserException("Not valid user!");
     }
 
     @Override
-    public Collection<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text) {
         if (text.isEmpty()) {
             return Collections.EMPTY_LIST;
         } else {
