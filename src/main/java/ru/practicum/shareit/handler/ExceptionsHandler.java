@@ -33,7 +33,7 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = {IncorrectUserIdException.class, StartAfterEndException.class, ItemUnavailableException.class})
+    @ExceptionHandler(value = {StartAfterEndException.class, ItemUnavailableException.class, UnsupportedBookingStateException.class, IncorrectUserIdException.class, BookingDoubleApproveException.class, CommentCreationWithoutBookingException.class})
     ResponseEntity<Object> handleIncorrectUserIdException(RuntimeException e) throws JsonProcessingException {
         ErrorJson error = ErrorJson.builder()
                 .error(e.getMessage())

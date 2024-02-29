@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -24,16 +25,59 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
-    public List<BookingDto> returnAllBookings(Long userId) {
-        return bookingRepository.findByBookerId(userId);
+    public List<BookingDto> returnAllBookings(Long userId, String state) {
+        if (userRepository.existsById(userId)) {
+            switch (state) {
+                case "ALL":
+                    return bookingRepository.findByBookerId(userId);
+                case "FUTURE":
+                    return bookingRepository.findByBookerIdAndFutureState(userId, LocalDateTime.now());
+                case "CURRENT":
+                    return bookingRepository.findByBookerIdAndCurrentState(userId, LocalDateTime.now());
+                case "PAST":
+                    return bookingRepository.findByBookerIdAndPastState(userId, LocalDateTime.now());
+                case "WAITING":
+                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING);
+                case "REJECTED":
+                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED);
+                default:
+                    throw new UnsupportedBookingStateException("Unknown state: " + state);
+            }
+
+        } else throw new NotFoundUserException("Incorrect user id!");
     }
 
     @Override
+    public List<BookingDto> returnAllBookingsByOwner(Long userId, String state) {
+        if (userRepository.existsById(userId)) {
+            switch (state) {
+                case "ALL":
+                    return bookingRepository.findByOwnerId(userId);
+                case "FUTURE":
+                    return bookingRepository.findByOwnerIdAndFutureState(userId, LocalDateTime.now());
+                case "CURRENT":
+                    return bookingRepository.findByOwnerIdAndCurrentState(userId, LocalDateTime.now());
+                case "PAST":
+                    return bookingRepository.findByOwnerIdAndPastState(userId, LocalDateTime.now());
+                case "WAITING":
+                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.WAITING);
+                case "REJECTED":
+                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.REJECTED);
+                default:
+                    throw new UnsupportedBookingStateException("Unknown state: " + state);
+            }
+        } else throw new NotFoundUserException("Incorrect user id!");
+    }
+
+
+    @Override
     public BookingDto getBookingById(Long id, Long userId) {
-        Booking newBooking = bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException("Booking not found!"));
-        if (newBooking.getBooker().getId() == userId || newBooking.getItem().getOwner().getId() == userId) {
-            return BookingMapper.toBookingDto(newBooking);
-        } else throw new IncorrectUserIdException("Not your booking!");
+        if (userRepository.existsById(userId)) {
+            Booking newBooking = bookingRepository.findById(id).orElseThrow(() -> new BookingNotFoundException("Booking not found!"));
+            if (newBooking.getBooker().getId() == userId || newBooking.getItem().getOwner().getId() == userId) {
+                return BookingMapper.toBookingDto(newBooking);
+            } else throw new NotFoundUserException("Not your booking!");
+        } else throw new NotFoundUserException("User not found!");
     }
 
     @Override
@@ -63,6 +107,9 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto createBooking(Long userId, BookingCreateDto booking) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("User not found!"));
         Item item = itemRepository.findById(booking.getItemId()).orElseThrow(() -> new IncorrectItemIdException("Item not found!"));
+        if (item.getOwner().getId() == userId) {
+            throw new IncorrectItemIdException("Your Item!");
+        }
         if (booking.getStart().isAfter(booking.getEnd()) || booking.getStart().isEqual(booking.getEnd())) {
             throw new StartAfterEndException("Start is after or equals end");
         }
@@ -79,14 +126,15 @@ public class BookingServiceImpl implements BookingService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundUserException("User not found!"));
         Booking newBooking = bookingRepository.findById(bookingId).orElseThrow(() -> new BookingNotFoundException("Booking not found!"));
         if (newBooking.getItem().getOwner().getId() != userId) {
-            throw new IncorrectUserIdException("Not your booking!");
+            throw new NotFoundUserException("Not your booking!");
         }
-        if (approve) {
-            newBooking.setStatus(BookingStatus.APPROVED);
-        } else {
-            newBooking.setStatus(BookingStatus.REJECTED);
-        }
-
-        return BookingMapper.toBookingDto(bookingRepository.save(newBooking));
+        if (!newBooking.status.equals(BookingStatus.APPROVED)) {
+            if (approve) {
+                newBooking.setStatus(BookingStatus.APPROVED);
+            } else {
+                newBooking.setStatus(BookingStatus.REJECTED);
+            }
+            return BookingMapper.toBookingDto(bookingRepository.save(newBooking));
+        } else throw new BookingDoubleApproveException("Booking already approved!");
     }
 }
