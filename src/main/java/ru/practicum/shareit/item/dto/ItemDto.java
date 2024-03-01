@@ -20,20 +20,20 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemDto {
-    long id;
+    private long id;
     @NotBlank
-    String name;
+    private String name;
     @NotBlank
-    String description;
+    private String description;
     @NotNull
-    Boolean available;
+    private Boolean available;
     @JsonIgnore
-    long ownerId;
+    private long ownerId;
     @JsonIgnore
-    Long requestId;
-    BookingShortDto lastBooking;
-    BookingShortDto nextBooking;
-    List<CommentDto> comments;
+    private Long requestId;
+    private BookingShortDto lastBooking;
+    private BookingShortDto nextBooking;
+    private List<CommentDto> comments;
 
     public ItemDto(long id, String name, String description, Boolean available, long ownerId, Long requestId) {
         this.id = id;

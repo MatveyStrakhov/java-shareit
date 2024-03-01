@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(name = "text")
-    String text;
+    private String text;
     @Column(name = "author_id")
-    Long userId;
+    private Long userId;
     @Column(name = "item_id")
-    Long itemId;
+    private Long itemId;
     @Column(name = "created")
-    LocalDateTime created;
+    private LocalDateTime created;
 }

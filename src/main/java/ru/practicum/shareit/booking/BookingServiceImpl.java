@@ -128,7 +128,7 @@ public class BookingServiceImpl implements BookingService {
         if (newBooking.getItem().getOwner().getId() != userId) {
             throw new NotFoundUserException("Not your booking!");
         }
-        if (!newBooking.status.equals(BookingStatus.APPROVED)) {
+        if (!newBooking.getStatus().equals(BookingStatus.APPROVED)) {
             if (approve) {
                 newBooking.setStatus(BookingStatus.APPROVED);
             } else {

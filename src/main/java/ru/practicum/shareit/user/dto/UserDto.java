@@ -15,10 +15,10 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto implements Serializable {
-    long id;
+    private long id;
     @NotBlank
-    String name;
+    private String name;
     @NotNull
     @Email
-    String email;
+    private String email;
 }

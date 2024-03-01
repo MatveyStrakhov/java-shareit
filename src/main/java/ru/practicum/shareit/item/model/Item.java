@@ -20,18 +20,18 @@ import javax.validation.constraints.NotNull;
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long id;
+    private long id;
     @NotBlank
-    String name;
+    private String name;
     @NotBlank
-    String description;
+    private String description;
     @Column(name = "is_available")
     @NotNull
-    Boolean available;
+    private Boolean available;
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    User owner;
+    private User owner;
     @Column(name = "request_id")
-    Long requestId;
+    private Long requestId;
 }
 

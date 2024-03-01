@@ -13,5 +13,5 @@ import java.util.List;
 @Primary
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select new ru.practicum.shareit.user.dto.UserDto(u.id, u.name, u.email) from User u")
-    List<UserDto> findBy();
+    List<UserDto> findAllAndReturnDto();
 }
