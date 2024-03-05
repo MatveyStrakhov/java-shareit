@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import ru.practicum.shareit.exception.IncorrectEmailException;
-import ru.practicum.shareit.exception.IncorrectItemIdException;
-import ru.practicum.shareit.exception.IncorrectUserIdException;
-import ru.practicum.shareit.exception.NotFoundUserException;
+import ru.practicum.shareit.exception.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -36,8 +33,8 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = IncorrectUserIdException.class)
-    ResponseEntity<Object> handleIncorrectUserIdException(IncorrectUserIdException e) throws JsonProcessingException {
+    @ExceptionHandler(value = {StartAfterEndException.class, ItemUnavailableException.class, UnsupportedBookingStateException.class, IncorrectUserIdException.class, BookingDoubleApproveException.class, CommentCreationWithoutBookingException.class})
+    ResponseEntity<Object> handleIncorrectUserIdException(RuntimeException e) throws JsonProcessingException {
         ErrorJson error = ErrorJson.builder()
                 .error(e.getMessage())
                 .timestamp(LocalDateTime.now())
@@ -46,7 +43,7 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {IncorrectItemIdException.class, NotFoundUserException.class})
+    @ExceptionHandler(value = {IncorrectItemIdException.class, NotFoundUserException.class, BookingNotFoundException.class})
     ResponseEntity<Object> handleIncorrectItemIdExceptionAndNotFoundUserException(RuntimeException e) throws JsonProcessingException {
         ErrorJson error = ErrorJson.builder()
                 .error(e.getMessage())
