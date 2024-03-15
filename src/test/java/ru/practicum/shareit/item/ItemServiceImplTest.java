@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.exception.CommentCreationWithoutBookingException;
 import ru.practicum.shareit.exception.IncorrectItemIdException;
 import ru.practicum.shareit.exception.NotFoundUserException;
 import ru.practicum.shareit.item.comment.Comment;
@@ -31,8 +32,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
@@ -87,7 +87,7 @@ public class ItemServiceImplTest {
     private final CommentCreateDto commentCreateDto = CommentCreateDto.builder()
             .text("comment")
             .build();
-    private final Comment comment =  Comment.builder()
+    private final Comment comment = Comment.builder()
             .id(1L)
             .text("comment")
             .created(LocalDateTime.now())
@@ -154,9 +154,12 @@ public class ItemServiceImplTest {
     @Test
     void testCreateComment() {
         lenient().when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(bookingRepository.isBooker(anyLong(),anyLong(),any(LocalDateTime.class))).thenReturn(true);
+        lenient().when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+        lenient().when(bookingRepository.isBooker(anyLong(), anyLong(), any(LocalDateTime.class))).thenReturn(true);
+        lenient().when(bookingRepository.isBooker(eq(2L), eq(1L), any(LocalDateTime.class))).thenReturn(false);
         when(commentRepository.save(any(Comment.class))).thenReturn(comment);
-        assertEquals(itemService.createComment(commentCreateDto,1L,1L).getAuthorName(),commentDto.getAuthorName());
+        assertEquals(itemService.createComment(commentCreateDto, 1L, 1L).getAuthorName(), commentDto.getAuthorName());
+        assertThrows(CommentCreationWithoutBookingException.class, () -> itemService.createComment(commentCreateDto, 1L, 2L));
 
     }
 }

@@ -230,4 +230,21 @@ public class ItemControllerTest {
                 .andExpect(status().isBadRequest());
         commentCreateDto.setText("description");
     }
+
+    @SneakyThrows
+    @Order(10)
+    @Test
+    void return200AndItemDtoWhenGettingItemById() {
+        when(itemService.getItemById(1L,1L)).thenReturn(itemDto);
+        String result = mvc.perform(get("/items/1")
+                        .header(HEADER, 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(itemDto), result);
+
+    }
 }
