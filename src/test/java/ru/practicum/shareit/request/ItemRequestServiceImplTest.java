@@ -29,6 +29,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -112,7 +113,27 @@ public class ItemRequestServiceImplTest {
     void testReturnItemRequestsByPage() {
         Page<ItemRequest> page = new PageImpl<>(List.of(itemRequest));
         when(itemRequestRepository.findAll(any(PageRequest.class))).thenReturn(page);
-        assertEquals(itemRequestService.returnItemRequestsByPage(0,20,1L),Collections.emptyList());
-        assertEquals(itemRequestService.returnItemRequestsByPage(0,20,3L),List.of(itemRequestWithResponsesDto));
+        assertEquals(itemRequestService.returnItemRequestsByPage(0, 20, 1L), Collections.emptyList());
+        assertEquals(itemRequestService.returnItemRequestsByPage(0, 20, 3L), List.of(itemRequestWithResponsesDto));
+    }
+
+    @Order(4)
+    @Test
+    void testReturnAllItemRequestsByUserId() {
+        lenient().when(userRepository.existsById(1L)).thenReturn(true);
+        lenient().when(userRepository.existsById(2L)).thenReturn(false);
+        lenient().when(itemRequestRepository.findByRequestorId(1L)).thenReturn(List.of(itemRequestWithResponsesDto));
+        lenient().when(itemRequestRepository.findByRequestorId(2L)).thenReturn(Collections.emptyList());
+        assertEquals(itemRequestService.returnAllItemRequestsByUserId(1L), List.of(itemRequestWithResponsesDto));
+        assertThrows(NotFoundUserException.class, () -> itemRequestService.returnAllItemRequestsByUserId(2L));
+    }
+
+    @Order(5)
+    @Test
+    void testReturnAllItemRequests() {
+        Page<ItemRequest> page = new PageImpl<>(List.of(itemRequest));
+        lenient().when(itemRequestRepository.findAll()).thenReturn(List.of(itemRequest));
+        when(itemRepository.findByRequestId(1L)).thenReturn(Collections.emptyList());
+        assertEquals(itemRequestService.returnAllItemRequests(),List.of(itemRequestWithResponsesDto));
     }
 }
