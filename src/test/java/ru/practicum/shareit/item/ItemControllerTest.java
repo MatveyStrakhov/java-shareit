@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.handler.ExceptionsHandler;
 import ru.practicum.shareit.item.comment.CommentCreateDto;
 import ru.practicum.shareit.item.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -80,6 +81,7 @@ public class ItemControllerTest {
     void setUp() {
         mvc = MockMvcBuilders
                 .standaloneSetup(itemController)
+                .setControllerAdvice(new ExceptionsHandler())
                 .build();
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());

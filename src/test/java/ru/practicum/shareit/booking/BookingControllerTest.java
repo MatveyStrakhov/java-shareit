@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingUpdateDto;
+import ru.practicum.shareit.handler.ExceptionsHandler;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
@@ -79,6 +80,7 @@ public class BookingControllerTest {
     void setUp() {
         mvc = MockMvcBuilders
                 .standaloneSetup(bookingController)
+                .setControllerAdvice(new ExceptionsHandler())
                 .build();
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
