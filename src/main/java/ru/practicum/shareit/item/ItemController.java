@@ -8,6 +8,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -20,8 +22,15 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping()
-    public List<ItemDto> getAllItems(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.returnAllItems(userId);
+    public List<ItemDto> getAllItems(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId, @Valid @PositiveOrZero @RequestParam(required = false, value = "from") Integer from,
+                                     @Valid @Positive @RequestParam(required = false, value = "size") Integer size) {
+        if (from == null) {
+            from = 0;
+        }
+        if (size == null) {
+            size = Integer.MAX_VALUE;
+        }
+        return itemService.returnAllItems(userId, from, size);
     }
 
     @GetMapping("/{id}")
@@ -40,13 +49,20 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestParam String text) {
-        return itemService.searchItems(text);
+    public List<ItemDto> searchItem(@RequestParam String text, @Valid @PositiveOrZero @RequestParam(required = false, value = "from") Integer from,
+                                    @Valid @Positive @RequestParam(required = false, value = "size") Integer size) {
+        if (from == null) {
+            from = 0;
+        }
+        if (size == null) {
+            size = Integer.MAX_VALUE;
+        }
+        return itemService.searchItems(text, from, size);
     }
 
     @PostMapping("/{id}/comment")
     public CommentDto addComment(@Valid @RequestBody CommentCreateDto commentCreateDto, @PathVariable("id") Long itemId, @NotNull @RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.createComment(commentCreateDto,itemId,userId);
+        return itemService.createComment(commentCreateDto, itemId, userId);
     }
 
 }

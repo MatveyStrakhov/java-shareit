@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import ru.practicum.shareit.exception.*;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -33,7 +34,7 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = {StartAfterEndException.class, ItemUnavailableException.class, UnsupportedBookingStateException.class, IncorrectUserIdException.class, BookingDoubleApproveException.class, CommentCreationWithoutBookingException.class})
+    @ExceptionHandler(value = {StartAfterEndException.class, ItemUnavailableException.class, UnsupportedBookingStateException.class, IncorrectUserIdException.class, BookingDoubleApproveException.class, CommentCreationWithoutBookingException.class, ConstraintViolationException.class})
     ResponseEntity<Object> handleIncorrectUserIdException(RuntimeException e) throws JsonProcessingException {
         ErrorJson error = ErrorJson.builder()
                 .error(e.getMessage())
@@ -43,7 +44,7 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {IncorrectItemIdException.class, NotFoundUserException.class, BookingNotFoundException.class})
+    @ExceptionHandler(value = {IncorrectItemIdException.class, NotFoundUserException.class, BookingNotFoundException.class, ItemRequestNotFoundException.class})
     ResponseEntity<Object> handleIncorrectItemIdExceptionAndNotFoundUserException(RuntimeException e) throws JsonProcessingException {
         ErrorJson error = ErrorJson.builder()
                 .error(e.getMessage())

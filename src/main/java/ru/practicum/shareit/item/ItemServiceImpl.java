@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
@@ -17,6 +18,7 @@ import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +29,15 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
-    public List<ItemDto> returnAllItems(Long userId) {
-        List<ItemDto> items = itemRepository.findByOwnerId(userId);
-        items.replaceAll((ItemDto itemDto) -> {
+    public List<ItemDto> returnAllItems(Long userId, int from, int size) {
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<ItemDto> items = itemRepository.findByOwnerId(userId, pageRequest).getContent();
+        List<ItemDto> modifiedItems = items.stream().map((ItemDto itemDto) -> {
             if (itemDto.getOwnerId() == userId) {
                 return getItemById(itemDto.getId(), userId);
             } else return itemDto;
-        });
-        return items;
+        }).collect(Collectors.toList());
+        return modifiedItems;
     }
 
     @Override
@@ -100,11 +103,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(String text) {
+    public List<ItemDto> searchItems(String text, int from, int size) {
         if (text.isEmpty()) {
             return Collections.emptyList();
         } else {
-            return itemRepository.findByNameAndDescription(text.toLowerCase());
+            PageRequest pageRequest = PageRequest.of(from / size, size);
+            return itemRepository.findByNameAndDescription(text.toLowerCase(), pageRequest).getContent();
         }
     }
 
