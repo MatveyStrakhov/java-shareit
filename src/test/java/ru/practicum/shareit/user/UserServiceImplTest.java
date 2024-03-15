@@ -7,6 +7,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
 import ru.practicum.shareit.exception.IncorrectEmailException;
@@ -17,8 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -92,5 +92,12 @@ public class UserServiceImplTest {
         lenient().when(userRepository.findById(2L)).thenReturn(Optional.empty());
         assertEquals(userService.getUserById(1L).getId(), userDto.getId());
         assertThrows(NotFoundUserException.class, () -> userService.getUserById(2L));
+    }
+
+    @Order(6)
+    @Test
+    void testDeleteUser() {
+        userService.deleteUser(1L);
+        Mockito.verify(userRepository).deleteById(1L);
     }
 }

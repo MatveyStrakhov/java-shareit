@@ -216,4 +216,23 @@ public class BookingControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @SneakyThrows
+    @Test
+    @Order(3)
+    void return200WhenChangingBookingStatus() {
+        when(bookingService.changeBookingStatus(1L, 1L, true)).thenReturn(bookingDto);
+
+        String result = mvc.perform(patch("/bookings/1")
+                        .contentType("application/json")
+                        .param("approved", String.valueOf(true))
+                        .header(HEADER, user.getId())
+                        .content(objectMapper.writeValueAsString(bookingUpdateDto)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        assertEquals(objectMapper.writeValueAsString(bookingDto), result);
+    }
+
 }
