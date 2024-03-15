@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingUpdateDto;
+import ru.practicum.shareit.exception.UnsupportedBookingStateException;
 import ru.practicum.shareit.handler.ExceptionsHandler;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -155,7 +156,7 @@ public class BookingControllerTest {
         lenient().when(bookingService.getBookingById(1L, 1L)).thenReturn(bookingDto);
 
         String result = mvc.perform(get("/bookings/1")
-                        .header(HEADER,user.getId())
+                        .header(HEADER, user.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -199,6 +200,20 @@ public class BookingControllerTest {
                 .getResponse()
                 .getContentAsString();
         assertEquals(objectMapper.writeValueAsString((List.of(bookingDto))), result);
+    }
+
+    @SneakyThrows
+    @Test
+    @Order(8)
+    void return400WhenGettingAllBookings() {
+        when(bookingService.returnAllBookings(user.getId(), "UNSUPPORTED", 0, 20)).thenThrow(UnsupportedBookingStateException.class);
+
+        mvc.perform(get("/bookings")
+                        .param("state", "UNSUPPORTED")
+                        .param("from", String.valueOf(0))
+                        .param("size", String.valueOf(20))
+                        .header(HEADER, user.getId()))
+                .andExpect(status().isBadRequest());
     }
 
 }

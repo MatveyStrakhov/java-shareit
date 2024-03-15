@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import ru.practicum.shareit.exception.IncorrectEmailException;
 import ru.practicum.shareit.exception.NotFoundUserException;
 import ru.practicum.shareit.handler.ExceptionsHandler;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -39,13 +40,18 @@ public class UserControllerTest {
     private MockMvc mvc;
     private final User user = User.builder()
             .id(1L)
-            .name("username")
-            .email("email@email.com")
+            .name("user")
+            .email("email@gmail.com")
             .build();
     private final UserDto userDto = UserDto.builder()
             .id(1L)
-            .email("email@email.com")
+            .email("email@gmail.com")
             .name("username")
+            .build();
+    private final UserDto userDtoWithIncorrectEmail = UserDto.builder()
+            .id(1L)
+            .email("email@gmail.com")
+            .name("mischief")
             .build();
 
     @BeforeEach
@@ -77,7 +83,7 @@ public class UserControllerTest {
     @SneakyThrows
     @Order(2)
     @Test
-    void return400WhenCreatingAndUserEmailIsInvalid() {
+    void return400WhenCreatingAndUserEmailIsNull() {
         userDto.setEmail(null);
         mvc.perform(post("/users")
                         .contentType("application/json")
@@ -161,6 +167,18 @@ public class UserControllerTest {
                 .getResponse()
                 .getContentAsString();
         assertEquals(objectMapper.writeValueAsString(List.of(userDto)), response);
+    }
+
+    @SneakyThrows
+    @Order(10)
+    @Test
+    void return400WhenCreatingAndUserEmailIsInvalid() {
+        when(userService.createUser(userDtoWithIncorrectEmail)).thenThrow(IncorrectEmailException.class);
+        mvc.perform(post("/users")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userDtoWithIncorrectEmail)))
+                .andExpect(status().isConflict());
+
     }
 
 
