@@ -31,17 +31,17 @@ public class BookingServiceImpl implements BookingService {
             PageRequest pageRequest = PageRequest.of(from / size, size);
             switch (state) {
                 case "ALL":
-                    return bookingRepository.findByBookerId(userId, pageRequest).getContent();
+                    return bookingRepository.findByBookerId(userId, pageRequest);
                 case "FUTURE":
-                    return bookingRepository.findByBookerIdAndFutureState(userId, LocalDateTime.now(), pageRequest).getContent();
+                    return bookingRepository.findByBookerIdAndFutureState(userId, LocalDateTime.now(), pageRequest);
                 case "CURRENT":
-                    return bookingRepository.findByBookerIdAndCurrentState(userId, LocalDateTime.now(), pageRequest).getContent();
+                    return bookingRepository.findByBookerIdAndCurrentState(userId, LocalDateTime.now(), pageRequest);
                 case "PAST":
-                    return bookingRepository.findByBookerIdAndPastState(userId, LocalDateTime.now(), pageRequest).getContent();
+                    return bookingRepository.findByBookerIdAndPastState(userId, LocalDateTime.now(), pageRequest);
                 case "WAITING":
-                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING, pageRequest).getContent();
+                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING, pageRequest);
                 case "REJECTED":
-                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest).getContent();
+                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest);
                 default:
                     throw new UnsupportedBookingStateException("Unknown state: " + state);
             }
@@ -55,17 +55,17 @@ public class BookingServiceImpl implements BookingService {
             PageRequest pageRequest = PageRequest.of(from / size, size);
             switch (state) {
                 case "ALL":
-                    return bookingRepository.findByOwnerId(userId, pageRequest).getContent();
+                    return bookingRepository.findByOwnerId(userId, pageRequest);
                 case "FUTURE":
-                    return bookingRepository.findByOwnerIdAndFutureState(userId, LocalDateTime.now(), pageRequest).getContent();
+                    return bookingRepository.findByOwnerIdAndFutureState(userId, LocalDateTime.now(), pageRequest);
                 case "CURRENT":
-                    return bookingRepository.findByOwnerIdAndCurrentState(userId, LocalDateTime.now(), pageRequest).getContent();
+                    return bookingRepository.findByOwnerIdAndCurrentState(userId, LocalDateTime.now(), pageRequest);
                 case "PAST":
-                    return bookingRepository.findByOwnerIdAndPastState(userId, LocalDateTime.now(), pageRequest).getContent();
+                    return bookingRepository.findByOwnerIdAndPastState(userId, LocalDateTime.now(), pageRequest);
                 case "WAITING":
-                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.WAITING, pageRequest).getContent();
+                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.WAITING, pageRequest);
                 case "REJECTED":
-                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest).getContent();
+                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest);
                 default:
                     throw new UnsupportedBookingStateException("Unknown state: " + state);
             }

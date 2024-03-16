@@ -89,75 +89,75 @@ public class BookingRepositoryTest {
     @Order(2)
     @Test
     void testFindByBookerId() {
-        assertEquals(bookingRepository.findByBookerId(1L, PageRequest.of(0, 10)).getContent().get(0).getId(), 3L);
-        assertEquals(bookingRepository.findByBookerId(2L, PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByBookerId(1L, PageRequest.of(0, 10)).get(0).getId(), 3L);
+        assertEquals(bookingRepository.findByBookerId(2L, PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(3)
     @Test
     void testFindByBookerIdAndFutureState() {
-        assertEquals(bookingRepository.findByBookerIdAndFutureState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().get(0).getId(), 2L);
-        assertEquals(bookingRepository.findByBookerIdAndFutureState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByBookerIdAndFutureState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).get(0).getId(), 2L);
+        assertEquals(bookingRepository.findByBookerIdAndFutureState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(4)
     @Test
     void testFindByBookerIdAndCurrentState() {
-        assertEquals(bookingRepository.findByBookerIdAndCurrentState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().get(0).getId(), 1L);
-        assertEquals(bookingRepository.findByBookerIdAndCurrentState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByBookerIdAndCurrentState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).get(0).getId(), 1L);
+        assertEquals(bookingRepository.findByBookerIdAndCurrentState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(5)
     @Test
     void testFindByBookerIdAndPastState() {
-        assertEquals(bookingRepository.findByBookerIdAndPastState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().get(0).getId(), 3L);
-        assertEquals(bookingRepository.findByBookerIdAndPastState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByBookerIdAndPastState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).get(0).getId(), 3L);
+        assertEquals(bookingRepository.findByBookerIdAndPastState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(6)
     @Test
     void testFindByBookerIdAndStatus() {
-        assertEquals(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.WAITING, PageRequest.of(0, 10)).getContent().size(), 3);
-        assertEquals(bookingRepository.findByBookerIdAndStatus(2L, BookingStatus.WAITING, PageRequest.of(0, 10)).getContent().size(), 0);
-        assertEquals(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.APPROVED, PageRequest.of(0, 10)).getContent().size(), 0);
-        assertEquals(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.REJECTED, PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.WAITING, PageRequest.of(0, 10)).size(), 3);
+        assertEquals(bookingRepository.findByBookerIdAndStatus(2L, BookingStatus.WAITING, PageRequest.of(0, 10)).size(), 0);
+        assertEquals(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.APPROVED, PageRequest.of(0, 10)).size(), 0);
+        assertEquals(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.REJECTED, PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(7)
     @Test
     void testFindByOwnerId() {
-        assertEquals(bookingRepository.findByOwnerId(2L, PageRequest.of(0, 10)).getContent().get(0).getId(), 3L);
-        assertEquals(bookingRepository.findByOwnerId(1L, PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByOwnerId(2L, PageRequest.of(0, 10)).get(0).getId(), 3L);
+        assertEquals(bookingRepository.findByOwnerId(1L, PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(8)
     @Test
     void testFindByOwnerIdAndFutureState() {
-        assertEquals(bookingRepository.findByOwnerIdAndFutureState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().get(0).getId(), 2L);
-        assertEquals(bookingRepository.findByOwnerIdAndFutureState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByOwnerIdAndFutureState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).get(0).getId(), 2L);
+        assertEquals(bookingRepository.findByOwnerIdAndFutureState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(9)
     @Test
     void testFindByOwnerIdAndCurrentState() {
-        assertEquals(bookingRepository.findByOwnerIdAndCurrentState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().get(0).getId(), 1L);
-        assertEquals(bookingRepository.findByOwnerIdAndCurrentState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByOwnerIdAndCurrentState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).get(0).getId(), 1L);
+        assertEquals(bookingRepository.findByOwnerIdAndCurrentState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(10)
     @Test
     void testFindByOwnerIdAndPastState() {
-        assertEquals(bookingRepository.findByOwnerIdAndPastState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().get(0).getId(), 3L);
-        assertEquals(bookingRepository.findByOwnerIdAndPastState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByOwnerIdAndPastState(2L, LocalDateTime.now(), PageRequest.of(0, 10)).get(0).getId(), 3L);
+        assertEquals(bookingRepository.findByOwnerIdAndPastState(1L, LocalDateTime.now(), PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(11)
     @Test
     void testFindByOwnerIdAndStatus() {
-        assertEquals(bookingRepository.findByOwnerIdAndStatus(2L, BookingStatus.WAITING, PageRequest.of(0, 10)).getContent().size(), 3);
-        assertEquals(bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.WAITING, PageRequest.of(0, 10)).getContent().size(), 0);
-        assertEquals(bookingRepository.findByOwnerIdAndStatus(2L, BookingStatus.APPROVED, PageRequest.of(0, 10)).getContent().size(), 0);
-        assertEquals(bookingRepository.findByOwnerIdAndStatus(2L, BookingStatus.REJECTED, PageRequest.of(0, 10)).getContent().size(), 0);
+        assertEquals(bookingRepository.findByOwnerIdAndStatus(2L, BookingStatus.WAITING, PageRequest.of(0, 10)).size(), 3);
+        assertEquals(bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.WAITING, PageRequest.of(0, 10)).size(), 0);
+        assertEquals(bookingRepository.findByOwnerIdAndStatus(2L, BookingStatus.APPROVED, PageRequest.of(0, 10)).size(), 0);
+        assertEquals(bookingRepository.findByOwnerIdAndStatus(2L, BookingStatus.REJECTED, PageRequest.of(0, 10)).size(), 0);
     }
 
     @Order(12)

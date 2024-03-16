@@ -19,7 +19,7 @@ public class ItemRequestWithResponsesDto {
     private String description;
     private long requestorId;
     private LocalDateTime created;
-    List<ItemResponseDto> items;
+    private List<ItemResponseDto> items;
 
     public ItemRequestWithResponsesDto(long id, String description, long requestorId, LocalDateTime created) {
         this.id = id;

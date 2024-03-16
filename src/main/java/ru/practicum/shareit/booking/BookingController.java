@@ -27,14 +27,8 @@ public class BookingController {
 
     @GetMapping()
     public List<BookingDto> getAllBookings(@RequestParam(required = false) String state, @NotNull @RequestHeader("X-Sharer-User-Id") Long userId,
-                                           @Valid @PositiveOrZero @RequestParam(required = false, value = "from") Integer from,
-                                           @Valid @Positive @RequestParam(required = false, value = "size") Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
+                                           @Valid @PositiveOrZero @RequestParam(required = false, value = "from", defaultValue = "0") Integer from,
+                                           @Valid @Positive @RequestParam(required = false, value = "size", defaultValue = "1000") Integer size) {
         return bookingService.returnAllBookings(userId, Objects.requireNonNullElse(state, "ALL"), from, size);
     }
 
@@ -44,14 +38,8 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public List<BookingDto> getBookingByOwnerId(@RequestParam(required = false) String state, @NotNull @RequestHeader("X-Sharer-User-Id") Long userId, @Valid @PositiveOrZero @RequestParam(required = false, value = "from") Integer from,
-                                                @Valid @Positive @RequestParam(required = false, value = "size") Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
+    public List<BookingDto> getBookingByOwnerId(@RequestParam(required = false) String state, @NotNull @RequestHeader("X-Sharer-User-Id") Long userId, @Valid @PositiveOrZero @RequestParam(required = false, value = "from", defaultValue = "0") Integer from,
+                                                @Valid @Positive @RequestParam(required = false, value = "size", defaultValue = "1000") Integer size) {
         return bookingService.returnAllBookingsByOwner(userId, Objects.requireNonNullElse(state, "ALL"), from, size);
     }
 

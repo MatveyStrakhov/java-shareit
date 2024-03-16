@@ -5,8 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -188,20 +186,14 @@ public class BookingServiceImplTest {
     @Order(6)
     @Test
     void testReturnAllBookingsByOwnerId() {
-        Page<BookingDto> pageOfAll = new PageImpl<>(List.of(bookingDto, currentBookingDto, futureBookingDto, pastBookingDto, rejectedBookingDto));
-        Page<BookingDto> pageOfFuture = new PageImpl<>(List.of(futureBookingDto));
-        Page<BookingDto> pageOfCurrent = new PageImpl<>(List.of(currentBookingDto));
-        Page<BookingDto> pageOfPast = new PageImpl<>(List.of(pastBookingDto));
-        Page<BookingDto> pageOfWaiting = new PageImpl<>(List.of(bookingDto));
-        Page<BookingDto> pageOfRejected = new PageImpl<>(List.of(rejectedBookingDto));
         PageRequest pageRequest = PageRequest.of(0, 20);
         lenient().when(userRepository.existsById(1L)).thenReturn(true);
-        when(bookingRepository.findByOwnerId(anyLong(), any(PageRequest.class))).thenReturn(pageOfAll);
-        when(bookingRepository.findByOwnerIdAndFutureState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(pageOfFuture);
-        when(bookingRepository.findByOwnerIdAndCurrentState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(pageOfCurrent);
-        when(bookingRepository.findByOwnerIdAndPastState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(pageOfPast);
-        when(bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.WAITING, pageRequest)).thenReturn(pageOfWaiting);
-        when(bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.REJECTED, pageRequest)).thenReturn(pageOfRejected);
+        when(bookingRepository.findByOwnerId(anyLong(), any(PageRequest.class))).thenReturn(List.of(bookingDto, currentBookingDto, futureBookingDto, pastBookingDto, rejectedBookingDto));
+        when(bookingRepository.findByOwnerIdAndFutureState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(futureBookingDto));
+        when(bookingRepository.findByOwnerIdAndCurrentState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(currentBookingDto));
+        when(bookingRepository.findByOwnerIdAndPastState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(pastBookingDto));
+        when(bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.WAITING, pageRequest)).thenReturn(List.of(bookingDto));
+        when(bookingRepository.findByOwnerIdAndStatus(1L, BookingStatus.REJECTED, pageRequest)).thenReturn(List.of(rejectedBookingDto));
         assertEquals(bookingService.returnAllBookingsByOwner(1L, "ALL", 0, 20).size(), 5);
         assertEquals(bookingService.returnAllBookingsByOwner(1L, "WAITING", 0, 20).get(0).getStatus(), BookingStatus.WAITING);
         assertTrue(bookingService.returnAllBookingsByOwner(1L, "CURRENT", 0, 20).get(0).getStart().isBefore(LocalDateTime.now()) &&
@@ -217,20 +209,14 @@ public class BookingServiceImplTest {
     @Order(7)
     @Test
     void testReturnAllBookingsByBookerId() {
-        Page<BookingDto> pageOfAll = new PageImpl<>(List.of(bookingDto, currentBookingDto, futureBookingDto, pastBookingDto, rejectedBookingDto));
-        Page<BookingDto> pageOfFuture = new PageImpl<>(List.of(futureBookingDto));
-        Page<BookingDto> pageOfCurrent = new PageImpl<>(List.of(currentBookingDto));
-        Page<BookingDto> pageOfPast = new PageImpl<>(List.of(pastBookingDto));
-        Page<BookingDto> pageOfWaiting = new PageImpl<>(List.of(bookingDto));
-        Page<BookingDto> pageOfRejected = new PageImpl<>(List.of(rejectedBookingDto));
         PageRequest pageRequest = PageRequest.of(0, 20);
         lenient().when(userRepository.existsById(1L)).thenReturn(true);
-        when(bookingRepository.findByBookerId(anyLong(), any(PageRequest.class))).thenReturn(pageOfAll);
-        when(bookingRepository.findByBookerIdAndFutureState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(pageOfFuture);
-        when(bookingRepository.findByBookerIdAndCurrentState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(pageOfCurrent);
-        when(bookingRepository.findByBookerIdAndPastState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(pageOfPast);
-        when(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.WAITING, pageRequest)).thenReturn(pageOfWaiting);
-        when(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.REJECTED, pageRequest)).thenReturn(pageOfRejected);
+        when(bookingRepository.findByBookerId(anyLong(), any(PageRequest.class))).thenReturn(List.of(bookingDto, currentBookingDto, futureBookingDto, pastBookingDto, rejectedBookingDto));
+        when(bookingRepository.findByBookerIdAndFutureState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(futureBookingDto));
+        when(bookingRepository.findByBookerIdAndCurrentState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(currentBookingDto));
+        when(bookingRepository.findByBookerIdAndPastState(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(pastBookingDto));
+        when(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.WAITING, pageRequest)).thenReturn(List.of(bookingDto));
+        when(bookingRepository.findByBookerIdAndStatus(1L, BookingStatus.REJECTED, pageRequest)).thenReturn(List.of(rejectedBookingDto));
         assertEquals(bookingService.returnAllBookings(1L, "ALL", 0, 20).size(), 5);
         assertEquals(bookingService.returnAllBookings(1L, "WAITING", 0, 20).get(0).getStatus(), BookingStatus.WAITING);
         assertTrue(bookingService.returnAllBookings(1L, "CURRENT", 0, 20).get(0).getStart().isBefore(LocalDateTime.now()) &&

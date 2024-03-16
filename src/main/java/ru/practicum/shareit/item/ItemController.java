@@ -22,14 +22,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping()
-    public List<ItemDto> getAllItems(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId, @Valid @PositiveOrZero @RequestParam(required = false, value = "from") Integer from,
-                                     @Valid @Positive @RequestParam(required = false, value = "size") Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
+    public List<ItemDto> getAllItems(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId, @Valid @PositiveOrZero @RequestParam(required = false, value = "from", defaultValue = "0") Integer from,
+                                     @Valid @Positive @RequestParam(required = false, value = "size", defaultValue = "1000") Integer size) {
         return itemService.returnAllItems(userId, from, size);
     }
 
@@ -49,14 +43,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestParam String text, @Valid @PositiveOrZero @RequestParam(required = false, value = "from") Integer from,
-                                    @Valid @Positive @RequestParam(required = false, value = "size") Integer size) {
-        if (from == null) {
-            from = 0;
-        }
-        if (size == null) {
-            size = Integer.MAX_VALUE;
-        }
+    public List<ItemDto> searchItem(@RequestParam String text, @Valid @PositiveOrZero @RequestParam(required = false, value = "from", defaultValue = "0") Integer from,
+                                    @Valid @Positive @RequestParam(required = false, value = "size", defaultValue = "1000") Integer size) {
         return itemService.searchItems(text, from, size);
     }
 

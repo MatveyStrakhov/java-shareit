@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -38,9 +37,7 @@ public class ItemControllerTest {
     ItemService itemService;
     @InjectMocks
     ItemController itemController;
-    @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
     private MockMvc mvc;
     private final User user = User.builder()
             .id(1L)
@@ -235,7 +232,7 @@ public class ItemControllerTest {
     @Order(10)
     @Test
     void return200AndItemDtoWhenGettingItemById() {
-        when(itemService.getItemById(1L,1L)).thenReturn(itemDto);
+        when(itemService.getItemById(1L, 1L)).thenReturn(itemDto);
         String result = mvc.perform(get("/items/1")
                         .header(HEADER, 1L)
                         .accept(MediaType.APPLICATION_JSON))
