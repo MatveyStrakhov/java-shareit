@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingCreateDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -25,21 +26,22 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
-    public List<BookingDto> returnAllBookings(Long userId, String state) {
+    public List<BookingDto> returnAllBookings(Long userId, String state, int from, int size) {
         if (userRepository.existsById(userId)) {
+            PageRequest pageRequest = PageRequest.of(from / size, size);
             switch (state) {
                 case "ALL":
-                    return bookingRepository.findByBookerId(userId);
+                    return bookingRepository.findByBookerId(userId, pageRequest);
                 case "FUTURE":
-                    return bookingRepository.findByBookerIdAndFutureState(userId, LocalDateTime.now());
+                    return bookingRepository.findByBookerIdAndFutureState(userId, LocalDateTime.now(), pageRequest);
                 case "CURRENT":
-                    return bookingRepository.findByBookerIdAndCurrentState(userId, LocalDateTime.now());
+                    return bookingRepository.findByBookerIdAndCurrentState(userId, LocalDateTime.now(), pageRequest);
                 case "PAST":
-                    return bookingRepository.findByBookerIdAndPastState(userId, LocalDateTime.now());
+                    return bookingRepository.findByBookerIdAndPastState(userId, LocalDateTime.now(), pageRequest);
                 case "WAITING":
-                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING);
+                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.WAITING, pageRequest);
                 case "REJECTED":
-                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED);
+                    return bookingRepository.findByBookerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest);
                 default:
                     throw new UnsupportedBookingStateException("Unknown state: " + state);
             }
@@ -48,21 +50,22 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> returnAllBookingsByOwner(Long userId, String state) {
+    public List<BookingDto> returnAllBookingsByOwner(Long userId, String state, int from, int size) {
         if (userRepository.existsById(userId)) {
+            PageRequest pageRequest = PageRequest.of(from / size, size);
             switch (state) {
                 case "ALL":
-                    return bookingRepository.findByOwnerId(userId);
+                    return bookingRepository.findByOwnerId(userId, pageRequest);
                 case "FUTURE":
-                    return bookingRepository.findByOwnerIdAndFutureState(userId, LocalDateTime.now());
+                    return bookingRepository.findByOwnerIdAndFutureState(userId, LocalDateTime.now(), pageRequest);
                 case "CURRENT":
-                    return bookingRepository.findByOwnerIdAndCurrentState(userId, LocalDateTime.now());
+                    return bookingRepository.findByOwnerIdAndCurrentState(userId, LocalDateTime.now(), pageRequest);
                 case "PAST":
-                    return bookingRepository.findByOwnerIdAndPastState(userId, LocalDateTime.now());
+                    return bookingRepository.findByOwnerIdAndPastState(userId, LocalDateTime.now(), pageRequest);
                 case "WAITING":
-                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.WAITING);
+                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.WAITING, pageRequest);
                 case "REJECTED":
-                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.REJECTED);
+                    return bookingRepository.findByOwnerIdAndStatus(userId, BookingStatus.REJECTED, pageRequest);
                 default:
                     throw new UnsupportedBookingStateException("Unknown state: " + state);
             }
@@ -91,7 +94,7 @@ public class BookingServiceImpl implements BookingService {
             if (booking.getStart() != null && newBooking.getEnd().isAfter(booking.getStart())) {
                 newBooking.setStart(booking.getStart());
             } else throw new StartAfterEndException("End before start!");
-            if (booking.getEnd() != null && newBooking.getStart().isBefore(booking.getStart())) {
+            if (booking.getEnd() != null && newBooking.getStart().isBefore(booking.getEnd())) {
                 newBooking.setStart(booking.getStart());
             } else throw new StartAfterEndException("End before start!");
             if (booking.getItemId() != null) {

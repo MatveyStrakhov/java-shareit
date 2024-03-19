@@ -29,7 +29,6 @@ public class ItemDto {
     private Boolean available;
     @JsonIgnore
     private long ownerId;
-    @JsonIgnore
     private Long requestId;
     private BookingShortDto lastBooking;
     private BookingShortDto nextBooking;
