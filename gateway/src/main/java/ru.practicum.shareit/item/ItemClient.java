@@ -44,7 +44,7 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateItem(long itemId, long userId, ItemDto itemDto) {
-        return patch(String.valueOf(itemId), userId, itemDto);
+        return patch("/" + itemId, userId, itemDto);
     }
 
     public ResponseEntity<Object> searchItems(String text, Integer from, Integer size) {
